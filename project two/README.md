@@ -14,3 +14,17 @@ A REST API built with Node.js and Express, demonstrating core backend fundamenta
 Node.js, Express
 
 ## How to Run
+Server runs at `http://localhost:3000`.
+
+## Note on Data Storage
+
+Data is stored in-memory (a plain JavaScript array), which means it resets every time the server restarts. This was intentional for Project 2, which focused on API logic — persistent storage was addressed in Project 3.
+
+## Endpoints
+
+| Method | Route         | Description              |
+|--------|---------------|--------------------------|
+| GET    | `/`           | Health check / API info  |
+| GET    | `/users`      | Get all users            |
+| GET    | `/users/:id`  | Get a single user by id  |
+| POST   | `/users`      | Create a new user        |
