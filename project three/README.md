@@ -1,67 +1,33 @@
-Project 3 — Database Integration (SQLite)
-A REST API backed by a real, persistent SQLite database — data now
-survives server restarts, unlike Project 2's in-memory array.
-What's different from Project 2
+# Project 3 — Database Integration
 
-Project 2
-Project 3
-Storage
-JavaScript array (memory)
-SQLite file (app.db) on disk
-Survives restart?
-No — resets every time
-Yes — permanent
-Duplicate emails?
-Not prevented
-Blocked by UNIQUE constraint
-SQL injection risk?
-N/A (no SQL)
-Prevented via parameterized queries
-Operations
-GET, POST
-GET, POST, PUT, DELETE (full CRUD)
-Setup
-Open this folder in VS Code.
-In the terminal:
-Code
-You should see:
-Code
-A new file called app.db will appear in this folder — that's your
-actual database.
-If npm install fails on better-sqlite3 (it sometimes needs to
-compile native code on install): this usually still works out of the
-box on Windows with a recent Node version, but if you hit an error,
-send me the terminal output and we'll sort it out — this is a known
-occasional hiccup with native Node modules, not something wrong with
-your code.
-Testing with Thunder Client
-Create a user (POST):
-Code
-→ 201 Created
-Try creating the same email again:
-Code
-→ 400 Bad Request — "That email is already registered." (this is
-the database's UNIQUE constraint doing its job)
-Read all users (GET, works in a browser tab too):
-Code
-Read one user:
-Code
-Update a user (PUT):
-Code
-→ 200 OK with the updated row
-Delete a user (DELETE):
-Code
-→ 200 OK confirming deletion
-Prove persistence: stop the server (Ctrl+C in the terminal), run
-npm start again, then GET /users — your data is still there. This
-is the entire point of Project 3 vs Project 2.
-Why parameterized queries matter (SQL Injection)
-Look at this line in server.js:
-Js
-The ? marks are placeholders. The actual values are passed
-SEPARATELY as arguments, never pasted directly into the query text.
-This means even if someone submits a malicious string as their
-"name" (like '; DROP TABLE users; --), the database treats it as
-a harmless piece of text data — never as a command to execute. This
-is the exact defense your Project 3 slides described as "Neutralizing
-Attacks with Parameterized Queries."
+A REST API backed by a real, persistent SQLite database, with full CRUD operations and protection against SQL injection. Built for the DecodeLabs Full Stack Development Internship (2026 batch).
+
+## Features
+
+- **Real persistent storage** using SQLite (via Node's built-in `node:sqlite` module — no external database server needed)
+- **Schema design** with proper constraints: `NOT NULL`, `UNIQUE` (on email), `DEFAULT` values, auto-incrementing primary key
+- **Full CRUD** — Create (`POST`), Read (`GET` all + single), Update (`PUT`), Delete (`DELETE`)
+- **SQL injection protection** via parameterized queries — user input is always passed as data, never concatenated into raw SQL
+- Data integrity enforced at the database level (e.g. duplicate emails rejected by the database itself, not just application code)
+
+## Tech Stack
+
+Node.js, Express, SQLite (`node:sqlite`)
+
+## How to Run
+Server runs at `http://localhost:3000`. A file called `app.db` will be created automatically — this is your actual database.
+
+## Endpoints
+
+| Method | Route         | Description                |
+|--------|---------------|-----------------------------|
+| GET    | `/`           | Health check / API info    |
+| GET    | `/users`      | Read all users              |
+| GET    | `/users/:id`  | Read a single user           |
+| POST   | `/users`      | Create a new user            |
+| PUT    | `/users/:id`  | Update an existing user       |
+| DELETE | `/users/:id`  | Delete a user                 |
+
+## Why SQLite over an in-memory array (Project 2)?
+
+Project 2's data lived only in memory and vanished on every restart. Here, data is written to a real database file on disk (`app.db`), so it survives server restarts — the core requirement of "database integration."
